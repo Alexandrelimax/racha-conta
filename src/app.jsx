@@ -16,7 +16,7 @@ const FormSplitBill = ({ friend, onHandleSplitBill }) => {
 
   return (
     <form
-      className="p-5 bg-zinc-700 rounded-md w-96"
+      className="p-2 sm:p-5 bg-zinc-700 rounded-md w-80 sm:w-96"
       onSubmit={handleSubmitBill}
     >
       <h2 className="text-xl font-bold">Rache a conta com {friend}</h2>
@@ -31,7 +31,7 @@ const FormSplitBill = ({ friend, onHandleSplitBill }) => {
       <div className="flex justify-between my-3">
         <label>🍺 Seus Gastos</label>
         <input
-          className="bg-slate-50 py-1 text-black rounded-sm text-center"
+          className="bg-slate-50  py-1 text-black rounded-sm text-center"
           type="text"
           name="myExpenses"
         />
@@ -56,7 +56,7 @@ const FormSplitBill = ({ friend, onHandleSplitBill }) => {
 
 const App = () => {
   const [showFormFriend, setShowFormFriend] = useState(false)
-  const [showFormBill, setShowFormBill] = useState(false)
+  const [showFormBill, setShowFormBill] = useState(null)
   const [listOfFriend, setListOfFriend] = useState([])
   const [friend, setFriend] = useState("")
 
@@ -73,12 +73,16 @@ const App = () => {
     )
   }
   const handleShowFormBill = (friendId) => {
-    listOfFriend.forEach((friend) => {
-      if (friend.id === friendId) {
-        setShowFormBill(!showFormBill)
-        setFriend(friend.name)
-      }
-    })
+    const choosenFriend = listOfFriend.reduce(
+      (acc, friend) => (friend.id === friendId ? acc + friend.name : acc),
+      "",
+    )
+    if (showFormBill === choosenFriend) {
+      setShowFormBill(null)
+    } else {
+      setFriend(choosenFriend)
+      setShowFormBill(choosenFriend)
+    }
   }
   const handleAddNewFriend = (e) => {
     e.preventDefault()
@@ -100,14 +104,14 @@ const App = () => {
           <img src="/logo-racha-conta.png" alt="" />
         </div>
       </div>
-      <div className="flex justify-center gap-10 mt-10">
+      <div className="flex justify-center gap-10 mt-10 flex-wrap mx-5">
         <div className="w-80">
           <ul>
             {listOfFriend.map((friend) => (
               <ListFriend
                 key={friend.id}
                 friend={friend}
-                showFormBill={showFormBill}
+                showFormBill={showFormBill === friend.name}
                 onHandleShowFormBill={handleShowFormBill}
               />
             ))}
